@@ -30,6 +30,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 # dev.off()
 library(tidyverse)
 theme_set(theme_bw())
+df <- read_csv("data/fake_data.csv")
 ```
 
 ## Outline of the talk
@@ -76,24 +77,22 @@ theme_set(theme_bw())
 
 ## Simulated data
 
-* total number of locations (*N*): $20, 40, 60, 80, 100, 120$
+* total number of locations (*N*): `r str_c(unique(df$N), "", collapse = ", ")`
 * type of spatial relations:
     * random
     * two more or less separable regions
     * central and periphery
-* proportion of variation in the explored variable (*p*): $0.1, 0.2, \dots 0.5$
-* amount of clusters (*k*): $0.1\times N, 0.2\times N, \dots 0.9\times N$
-* percantage of observations taken from each cluster (*r*): $0.1, 0.2, \dots 0.9$
+* proportion of variation in the explored variable (*p*): `r str_c(unique(df$p), "", collapse = ", ")`
+* amount of clusters (*k*): $2, \dots N/2$
+* percantage of observations taken from each cluster (*r*): $0.1, 0.2, \dots$
 
 From  those values we could derive a number of sampled locations (n):
 
 $$n = N\times r$$
 
-## Example of different number of locations
+## Example of different number of locations (*N*)
 
 ```{r}
-df <- read_csv("data/fake_data.csv")
-
 df %>% 
   filter(id %in% 1:4) %>% 
   ggplot(aes(x, y))+
@@ -108,10 +107,8 @@ df %>%
 ## Example of different type of spatial relations
 
 ```{r}
-df <- read_csv("data/fake_data.csv")
-
 df %>% 
-  filter(N == 120, p == 0.4, r == 0.1, k == 60) %>% 
+  filter(N == 120, p == 0.4, r == 0.1) %>% 
   mutate(spatial_relations = factor(spatial_relations, levels = c("random", "two_regions", "central_periphery"), labels = c("random", "two regions", "central-periphery"))) %>% 
   ggplot(aes(x, y, color = value, shape = value))+
   stat_ellipse(alpha = 0.2)+
@@ -121,6 +118,34 @@ df %>%
   theme(axis.text = element_blank(),
         axis.ticks = element_blank())
 ```
+
+## Example of different proportions of variation in the explored variable (*p*)
+
+```{r}
+df %>% 
+  filter(N == 90, r == 0.1, spatial_relations == "random") %>% 
+  group_by(id) %>% 
+  summarise(a = sum(value == "a"),
+            b = sum(value == "b"),
+            x = max(x)-0.3,
+            y = max(y)-0.3,
+            p = p,
+            label = str_c("a = ", a, "\nb = ", b)) %>% 
+  distinct() ->
+  labels 
+
+df %>% 
+  filter(N == 90, r == 0.1, spatial_relations == "random") %>% 
+  ggplot(aes(x, y))+
+  stat_ellipse(alpha = 0.2, aes(color = value))+
+  geom_point(aes(color = value, shape = value))+
+  facet_wrap(~p, scale = "free", nrow = 2)+
+  geom_text(data = labels, aes(label = label, x = x, y = y))+
+  labs(x = "", y = "")+
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
 
 ## Conclusion
 
