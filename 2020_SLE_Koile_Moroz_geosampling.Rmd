@@ -31,13 +31,32 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(tidyverse)
 ```
 
+## Outline of the talk
+
+* introduction
+* blar
+
 ## Introduction
 
 As @dorian10 mentioned
 
-## Outline of the talk
+## Approach
 
-* bla
-* blar
+## Simulated data
+
+* total number of locations (*N*): $20, 40, 60, 80, 100, 120$
+* type of spatial relations:
+    * random
+    * two more or less separable regions
+    * central and periphery
+* proportion of variation in the explored variable (*p*): $0.1, 0.2, \dots 0.5$
+* amount of clusters (*k*): $0.1\times N, 0.2\times N, \dots 0.9\times N$
+* percantage of observations taken from each cluster (*r*): $0.1, 0.2, \dots 0.9$
+
+From  those values we could derive a number of sampled locations (n):
+
+$$n = \frac{N\times r}{k}$$
+
+## Conclusion
 
 # References {.allowframebreaks}
