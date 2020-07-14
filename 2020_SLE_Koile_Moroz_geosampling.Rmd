@@ -29,6 +29,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 # qrcode_gen("https://github.com/agricolamz/2020_SLE_Koile_Moroz_geosampling/raw/master/2020_SLE_Koile_Moroz_geosampling.pdf")
 # dev.off()
 library(tidyverse)
+theme_set(theme_bw())
 ```
 
 ## Outline of the talk
@@ -87,6 +88,39 @@ library(tidyverse)
 From  those values we could derive a number of sampled locations (n):
 
 $$n = N\times r$$
+
+## Example of different number of locations
+
+```{r}
+df <- read_csv("data/fake_data.csv")
+
+df %>% 
+  filter(id %in% 1:4) %>% 
+  ggplot(aes(x, y))+
+  geom_point()+
+  facet_wrap(~N)+
+  labs(x = "", y = "")+
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+
+## Example of different type of spatial relations
+
+```{r}
+df <- read_csv("data/fake_data.csv")
+
+df %>% 
+  filter(N == 120, p == 0.4, r == 0.1, k == 60) %>% 
+  mutate(spatial_relations = factor(spatial_relations, levels = c("random", "two_regions", "central_periphery"), labels = c("random", "two regions", "central-periphery"))) %>% 
+  ggplot(aes(x, y, color = value, shape = value))+
+  stat_ellipse(alpha = 0.2)+
+  geom_point()+
+  facet_wrap(~spatial_relations, scale = "free", nrow = 2)+
+  labs(x = "", y = "")+
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
 
 ## Conclusion
 
