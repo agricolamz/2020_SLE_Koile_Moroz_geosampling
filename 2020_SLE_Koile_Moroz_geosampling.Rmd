@@ -86,7 +86,7 @@ library(tidyverse)
 
 From  those values we could derive a number of sampled locations (n):
 
-$$n = \frac{N\times r}{k}$$
+$$n = N\times r$$
 
 ## Conclusion
 
