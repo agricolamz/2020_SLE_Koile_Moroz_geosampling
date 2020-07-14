@@ -1,0 +1,43 @@
+---
+title: "Detecting linguistic variation with geographic sampling"
+author: "Ezequiel Koile, George Moroz"
+institute: "Linguistic Convergence Laboratory, NRU HSE"
+date: |
+    | ... 2020
+    |
+    |
+    | ![](images/00_qrcode.png)'
+    | Presentation is available here: \alert{}
+output: 
+  beamer_presentation:
+    df_print: kable
+    latex_engine: xelatex
+    citation_package: natbib
+    keep_tex: false
+    includes:
+      in_header: "config/presento.sty"
+bibliography: bibliography.bib
+biblio-style: "apalike"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+# library(qrcode)
+# png(filename="images/00_qrcode.png", width = 200, height = 200)
+# qrcode_gen("https://github.com/agricolamz/2020.03.26_HSE_Dorian_variation/raw/master/2020.03.26_HSE_Dorian_variation.pdf")
+# dev.off()
+library(tidyverse)
+```
+
+## Introduction
+
+As @dorian10 mentioned
+
+## Outline of the talk
+
+* bla
+* blar
+
+# References {.allowframebreaks}
