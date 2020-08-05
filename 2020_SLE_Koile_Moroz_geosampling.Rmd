@@ -93,6 +93,31 @@ map.feature(languages = circassian$language,
     * Binary categories for simulated data with different distributions
     * Multiple categorical data for Circassian languages
 
+## Information entropy
+
+In order to measure the diversity of the questions we used the easiest measure --- information entropy, introduced in [@shannon48]:
+
+$$H(X) = - \sum_{i = 1}^n{P(x_i)\times\log_2P(x_i)}$$
+
+Range of the information entropy is $H(X) \in [0, +\infty]$: 
+
+```{r}
+tibble(a = c("A", "A", "A", "A", "B"),
+       b = c("A", "A", "A", "B", "B"),
+       c = c("A", "A", "B", "B", "B"),
+       e = c("A", "A", "B", "B", "C"),
+       f = c("A", "B", "C", "A", "B"),
+       g = c("A", "A", "A", "A", "A")) %>% 
+  pivot_longer(names_to = "id", values_to = "value", a:g) %>% 
+  group_by(id) %>% 
+  mutate(data = str_c(value, collapse = "-")) %>% 
+  count(data, value) %>% 
+  mutate(ratio = n/sum(n)) %>% 
+  group_by(data) %>% 
+  summarise(entropy = round(-sum(ratio*log2(ratio)), 2)) %>% 
+  arrange(entropy) %>% 
+  knitr::kable()
+```
 
 # Simulated data
 
