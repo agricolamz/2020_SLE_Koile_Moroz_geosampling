@@ -3,7 +3,7 @@ title: "Detecting linguistic variation with geographic sampling"
 author: "Ezequiel Koile, George Moroz"
 institute: "Linguistic Convergence Laboratory, NRU HSE"
 date: |
-    | ... 2020
+    | 26 August 2020
     |
     |    
     | Presentation is available here: \alert{tinyurl.com/y7kjsp67}
@@ -47,13 +47,37 @@ df <- read_csv("data/fake_data.csv")
 
 * We are interested in spotting variation of a discrete parameter among the lects spoken on these villages
 
-**MAP OF FEATURE ON VILLAGES**
+```{r, fig.height=5}
+library(lingtypology)
+map.feature(languages = circassian$language,
+            features = circassian$language,
+            latitude = circassian$latitude,
+            longitude = circassian$longitude, 
+            minimap = TRUE,
+            minimap.position = "topright",
+            legend.position = "bottomleft",
+            tile = "Esri.WorldTopoMap")
+```
+
+## The problem
 
 * We will very unlikely be able to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
 
 * *Research Question*: How to choose the sample of villages to survey? 
     1) How many villages is enough for spotting variation? 
     2) Given an amount of sampled villages, how to decide which ones are representative of our population?
+
+```{r, fig.height=5}
+map.feature(languages = circassian$language,
+            features = circassian$dialect,
+            latitude = circassian$latitude,
+            longitude = circassian$longitude, 
+            minimap = TRUE,
+            minimap.position = "topright",
+            legend.position = "bottomleft",
+            tile = "Esri.WorldTopoMap")
+```
+
 
 # Our approach
 
@@ -143,6 +167,7 @@ df %>%
         axis.ticks = element_blank())
 ```
 
+# Circassian data example
 
 # Conclusion
 
