@@ -41,6 +41,8 @@ df <- read_csv("data/fake_data.csv")
 * It can be found in phonological, morphosyntactic, and lexical features. 
 * Could be overlooked by linguists [@dorian10].
 
+#The problem
+
 ## The problem
 
 * Let us consider a geographical dialect continuum formed by a group of small villages [@chambers2004dialectology: 5--7]
@@ -84,15 +86,17 @@ map.feature(languages = circassian$language,
 
 ## Our approach
 
-* We assume that we want to find the distribution of variation for one feature, and we try different ways of choosing the sampled villages for finding it:
+* We want to find the distribution of variation for one feature, and we try different ways of choosing the sampled villages for finding it
 
 * As we assume we don't have any data beyond the geographic location of each village, we use these locations for building our sample
 
 * We generate clusters with different algorithms (k-means, hierarchical clustering) and pick our sampled locations based on them (package stats, [@rteam]).
 
-* We compare our results with random sampling for two different scenarios: 
-    * Binary categories for simulated data with different distributions
-    * Multiple categorical data for Circassian languages
+* We compare our results against random sampling in two different scenarios, both for simulated and for real Circassian data: 
+    * Multiple categorical data (detect variation)
+    * Binary categorical data (estimate variation)
+
+    
 
 ## Information entropy
 
@@ -100,7 +104,7 @@ In order to measure the diversity of the questions we used the easiest measure -
 
 $$H(X) = - \sum_{i = 1}^n{P(x_i)\times\log_2P(x_i)}$$
 
-Range of the information entropy is $H(X) \in [0, +\infty]$: 
+The range of the information entropy is $H(X) \in [0, +\infty]$: 
 
 ```{r}
 tibble(a = c("A", "A", "A", "A", "B"),
@@ -108,8 +112,9 @@ tibble(a = c("A", "A", "A", "A", "B"),
        c = c("A", "A", "B", "B", "B"),
        e = c("A", "A", "B", "B", "C"),
        f = c("A", "B", "C", "A", "B"),
-       g = c("A", "A", "A", "A", "A")) %>% 
-  pivot_longer(names_to = "id", values_to = "value", a:g) %>% 
+       g = c("A", "A", "A", "A", "A"), 
+       h = c("A", "B", "C", "D", "E")) %>% 
+  pivot_longer(names_to = "id", values_to = "value", a:h) %>% 
   group_by(id) %>% 
   mutate(data = str_c(value, collapse = "-")) %>% 
   count(data, value) %>% 
@@ -151,7 +156,7 @@ df %>%
 ```
 
 
-## Example of different type of spatial relations
+## Example of different types of spatial relations
 
 ```{r}
 df %>% 
