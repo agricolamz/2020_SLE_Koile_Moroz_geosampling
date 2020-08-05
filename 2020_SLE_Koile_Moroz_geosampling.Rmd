@@ -64,8 +64,9 @@ map.feature(languages = circassian$language,
 * We will very unlikely be able to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
 
 * *Research Question*: How to choose the sample of villages to survey? 
-    1) How many villages is enough for spotting variation? 
-    2) Given an amount of sampled villages, how to decide which ones are representative of our population?
+    1) How many villages is enough for detecting all variation present? (number of categories)
+    2) How many villages is enough for estimating the variation? (proportion of each category)
+    3) Given an amount of sampled villages, how to decide which ones are representative of our population?
 
 ```{r, fig.height=5}
 map.feature(languages = circassian$language,
