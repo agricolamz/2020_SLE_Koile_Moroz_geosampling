@@ -37,27 +37,23 @@ df <- read_csv("data/fake_data.csv")
 
 ## Introduction
 
-* Geolectal variation is often present in settings where one language is spoken across a vast geographic area ( @labov1963social ). 
+* Geolectal variation is often present in settings where one language is spoken across a vast geographic area [@labov1963social].
 * It can be found in phonological, morphosyntactic, and lexical features. 
-* Often overlooked by linguists ( @dorian10 ). 
-
-**ADD SOME MAPS**
+* Could be overlooked by linguists [@dorian10].
 
 ## The problem
 
-* Let us consider a geolectal continuum formed by a group of small vilages ( @chambers1998dialectology )
+* Let us consider a geographical dialect continuum formed by a group of small villages [@chambers2004dialectology: 5--7]
 
-**FLAT MAP OF VILLAGES**
-
-* We are interested in spotting variation of a certain parameter among the lects spoken on these villages
+* We are interested in spotting variation of a discrete parameter among the lects spoken on these villages
 
 **MAP OF FEATURE ON VILLAGES**
 
 * We will very unlikely be able to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
 
 * *Research Question*: How to choose the sample of villages to survey? 
-    * 1) How many villages is enough for spotting variation? 
-    * 2) Given an amount of sampled villages, how to decide which ones are representative of our population?
+    1) How many villages is enough for spotting variation? 
+    2) Given an amount of sampled villages, how to decide which ones are representative of our population?
 
 # Our approach
 
@@ -67,7 +63,7 @@ df <- read_csv("data/fake_data.csv")
 
 * As we assume we don't have any data beyond the geographic location of each village, we use these locations for building our sample
 
-* We generate clusters with different algorithms (k-means, hierarchical clustering) and pick our sampled locations based on them (package stats, @team2013r).
+* We generate clusters with different algorithms (k-means, hierarchical clustering) and pick our sampled locations based on them (package stats, [@rteam]).
 
 * We compare our results with random sampling for two different scenarios: 
     * Binary categories for simulated data with different distributions
