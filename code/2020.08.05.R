@@ -930,18 +930,60 @@ map_dfr(seq(0.05, 0.9, 0.05), function(i){
 random_result %>% 
   bind_rows(hclust_result, kmeans_result) %>% 
   group_by(type, n_category, n_villages, cluster_type, proportion_of_village) %>% 
-  mutate(H = H/max(H)) %>% 
+  #mutate(H = H/max(H, na.rm = TRUE)) %>% 
   ungroup() %>% 
   distinct(proportion_of_village, dataset_id, type, value, H, n_category, n_villages, cluster_type) %>% 
   count(dataset_id, H, n_category, type, proportion_of_village, n_villages, cluster_type) %>% 
-  mutate(ratio = n/n_category) %>% 
-  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
-  #geom_jitter(alpha = 0.5, size = 0.7)+
-  geom_smooth(se = FALSE)+
-  xlim(0.05, 0.6)+
-  facet_grid(n_villages+n_category~type)
+  mutate(ratio = n/n_category) ->
+  all_results
 
-  
+write_csv(all_results, "data/all_results.csv")
+all_results <- read_csv("data/all_results.csv")
+
+all_results %>% 
+  mutate(type = factor(type, levels = c("random", "equadistant", "central-periphery")),
+         cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering")),
+         ratio_binary = ifelse(ratio == 1, 1, 0)) ->
+  all_results
+
+all_results %>%   
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.2, size = 0.7)+
+  geom_smooth(se = FALSE)+
+  #facet_wrap(~n_category)
+  facet_grid(n_category+n_villages~type)
+
+fit_1 <- glm(ratio_binary ~ (type+cluster_type)*proportion_of_village, 
+             family = "binomial",
+             data=all_results)
+
+summary(fit_1)
+
+library(ggeffects)
+ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>% 
+  plot()
+
+
+
+all_results %>%   
+  ggplot(aes(H, ratio, linetype = factor(n_category), color = cluster_type))+
+  #geom_jitter(alpha = 0.2, size = 0.7)+
+  geom_smooth(se = FALSE)
+  #facet_wrap(~n_category)
+  facet_grid(cluster_type~type)
+
+
+fit_2 <- glm(ratio_binary ~ (type+cluster_type)*H, 
+             family = "binomial",
+             data=all_results)
+
+summary(fit_2)
+
+library(ggeffects)
+ggeffect(fit_2, terms = c("H", "cluster_type", "type")) %>% 
+  plot()
+
+
 random_result %>% 
   bind_rows(hclust_result, kmeans_result) %>% 
   group_by(type, n_category, n_villages, cluster_type, proportion_of_village, vars) %>% 
@@ -955,7 +997,7 @@ random_result %>%
          km = `k-means` - random) %>%
   pivot_longer(values_to = "value", names_to = "cluster_type", hc:km) %>% 
   ggplot(aes(proportion_of_village, value, color = cluster_type))+
-  geom_smooth(se = FALSE)+
+  geom_smooth(se = TRUE)+
   xlim(0.05, 0.6)+
   facet_grid(n_villages+n_category~type)+
   geom_hline(yintercept = 0, linetype = 2)

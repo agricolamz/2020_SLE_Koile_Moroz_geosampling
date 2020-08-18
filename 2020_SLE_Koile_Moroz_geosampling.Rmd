@@ -41,7 +41,7 @@ df <- read_csv("data/fake_data.csv")
 * It can be found in phonological, morphosyntactic, and lexical features. 
 * Could be overlooked by linguists [@dorian10].
 
-#The problem
+# The problem
 
 ## The problem
 
@@ -103,6 +103,7 @@ map.feature(languages = circassian$language,
 In order to measure the diversity of the questions we used the easiest measure --- information entropy, introduced in [@shannon48]:
 
 $$H(X) = - \sum_{i = 1}^n{P(x_i)\times\log_2P(x_i)}$$
+\pause
 
 The range of the information entropy is $H(X) \in [0, +\infty]$: 
 
