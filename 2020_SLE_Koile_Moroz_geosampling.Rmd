@@ -23,7 +23,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-options(digits = 2)
+options(digits = 3)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 # library(qrcode)
 # png(filename="images/00_qrcode.png", width = 200, height = 200)
@@ -115,22 +115,22 @@ map.feature(languages = circassian$language,
 
 ## Simulated data
 
-**Data**
+### Data
+
 * total number of locations (*N*): $30, 50, 70$
 * number of categories (*n*): $3, 4, 5$
 * type of spatial configuration:
     * uniform: variation is uniformly distributed across space
     * equadistant: *n* groups with unique values, partially overlaping 
-    * central-periphery: one main group in the center, and the rest around it
+    * central-periphery: one main group in the center, the rest around it
 * count configuration (*c*): how the *n* categories are distributed across the *N* locations (e.g., for *N*=30, *n*=3, the count configuration could be *c*=10-10-10, *c*=20-8-2, etc.)
 
-**Sampling**
-* clustering method: hierarchical clustering, k-means, random sampling
-* proportion of villages sampled: $p = 0.05, 0.10, \ldots, 0.95$
+### Sampling
 
-From  those values we could derive the number of sampled locations, or number of clusters ($k$):
+* clustering method: hierarchical clustering, *k*-means, random sampling
+* proportion of villages sampled: $p = 0.05, 0.10, \ldots, 0.90$
 
-$$n = p\times N$$
+From  those values we could derive the number of sampled locations, or number of clusters ($k$): $k = p\times N$
 
 ## Example of different number of locations (*N*)
 
@@ -155,8 +155,7 @@ generated_data %>%
         axis.ticks = element_blank())
 ```
 
-
-## Example of different number of categories
+## Example of different number of categories (*n*)
 
 ```{r}
 set.seed(42)
@@ -181,7 +180,7 @@ generated_data %>%
 ```
 
 
-## Example of different count configurations
+## Example of different count configurations (*c*)
 
 ```{r}
 set.seed(42)
@@ -247,45 +246,86 @@ generated_data %>%
 
 # Results and modelling
 
-## Results
+## Results: number of villages
 
-**Plots of fitting with different parameters (raw proportions, no modelling)**
+```{r}
+all_results %>%   
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.02, size = 0.7)+
+  geom_smooth(se = FALSE)+
+  facet_wrap(~n_villages, nrow = 2)+
+  labs(y = "proportion of variation discovered",
+       x = "proportion of villages sampled",
+       color = "")
+```
+
+## Results: number of categories
+
+```{r}
+all_results %>%   
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.02, size = 0.7)+
+  geom_smooth(se = FALSE)+
+  facet_wrap(~n_category, nrow = 2)+
+  labs(y = "proportion of variation discovered",
+       x = "proportion of villages sampled",
+       color = "")
+```
+
+
+## Results: type of spatial relation
+
+```{r}
+all_results %>%   
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.02, size = 0.7)+
+  geom_smooth(se = FALSE)+
+  facet_wrap(~type, nrow = 2)+
+  labs(y = "proportion of variation discovered",
+       x = "proportion of villages sampled",
+       color = "")
+```
 
 ## Modelling the variation
 
-* From the previous slides, we can see that our sampling methods outperform random sampling
+* From the previous slides, we can see that 
+  * *k*-means and hierarchical clustering are signifficantly better than random sampling in non-uniform spatial relations;
+  * *k*-means and hierarchical clustering are as good as random sampling with uniform spatial relations.
 
-* We want to account quantitatively how this improvement depends on different parameters present
-
-* We run a logistic regression with outcomes
-  * All varaition discovered / Not all variation discovered 
-* and parameters:  
-  * Proportion of villages sampled $p$ (numeric: $0.05.\ldots,0.95$)
-  * Type of clustering (hirarchical, K-means, random)
-  * **Amount of categories $n$ (numeric: 3,4,5)**
-  * Type of geographic distribution (central-periphery, equidistant, uniform)
-  * **Amount of total villages $N$ (numeric: 30, 50, 70)**
-  * **Entropy $H$ (numeric) **
+* We run a logistic regression in order to prove those observations by quantifying the relation between:
+  * **binary variable** (all variation discovered vs. Not all variation discovered)
+  * and parameters:  
+      * Proportion of villages sampled $p$ (numeric: $0.05, \ldots, 0.90$)
+      * Type of clustering (hirarchical, *k*-means, random)
+      * Type of geographic distribution (central-periphery, equidistant, uniform)
   
-outcome ~ logistic[ (spatial_configuration+cluster_type)*proportion_villages ]
+outcome ~ (spatial configuration + cluster type) * proportion_villages
              
-## Results
+## Regression results
 
+\small
 ```{r}
-fit_1 <- glm(ratio_binary ~ (type+cluster_type)*proportion_of_village, 
+fit_1 <- glm(ratio_binary ~ (type+cluster_type)*proportion_of_village,
              family = "binomial",
              data=all_results)
-
-tidy(fit_1) %>% 
+# tidy(fit_1) %>% 
+#   write_csv("data/fit_1.csv")
+read_csv("data/fit_1.csv") %>% 
   knitr::kable()
 ```
 
-## Results
+\normalsize
+
+## Regression results
 ```{r}
 ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>% 
-  plot()
+  plot()+
+  theme(text = element_text(size = 15),
+                  legend.position="bottom")+
+  labs(y = "proportion of variation discovered",
+       x = "proportion of villages sampled",
+       color = "")
 ```
-  
   
 # Circassian data example
 
@@ -327,7 +367,8 @@ all_results %>%
   #geom_jitter(alpha = 0.2, size = 0.7)+
   geom_smooth(se = FALSE)+
   scale_linetype_manual("", values=c(1,2,4))+
-  labs(x = "entropy", color = "", linetype = "")
+  labs(x = "entropy", y = "proportion of variation discovered",
+       color = "", linetype = "")
 ```
 
 ## Information entropy: simulated data
@@ -337,6 +378,5 @@ all_results %>%
 # Conclusions
 
 ## Conclusions
-
 
 # References {.allowframebreaks}
