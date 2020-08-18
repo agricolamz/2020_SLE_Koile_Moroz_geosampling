@@ -1002,3 +1002,69 @@ random_result %>%
   facet_grid(n_villages+n_category~type)+
   geom_hline(yintercept = 0, linetype = 2)
 
+
+
+# circassian data ---------------------------------------------------------
+
+library(lingtypology)
+
+N <- nrow(circassian)
+
+map_dfr(1:100, function(i){
+  circassian %>% 
+    mutate(dataset_id = i)
+}) ->
+  circassian_100
+
+set.seed(42)
+map_dfr(seq(0.05, 0.9, 0.01), function(i){
+  circassian_100 %>% 
+    group_by(dataset_id) %>% 
+    mutate(kmeans_cluster = kmeans(as.matrix(tibble(latitude, longitude)), 
+                                   centers = N*i)$cluster) %>% 
+    group_by(dataset_id, kmeans_cluster) %>% 
+    sample_n(1) %>% 
+    mutate(proportion_of_village = i,
+           cluster_type = "k-means") %>% 
+    ungroup() %>% 
+    select(-kmeans_cluster)
+}) ->
+  kmeans_result
+
+set.seed(42)
+map_dfr(seq(0.05, 0.9, 0.01), function(i){
+  circassian_100 %>% 
+    group_by(dataset_id) %>% 
+    mutate(hclust_cluster = cutree(hclust(dist(tibble(latitude, longitude))), k = N*i)) %>% 
+    group_by(dataset_id, hclust_cluster) %>% 
+    sample_n(1) %>% 
+    mutate(proportion_of_village = i,
+           cluster_type = "hierarchical clustering") %>% 
+    ungroup() %>% 
+    select(-hclust_cluster)
+}) ->
+  hclust_result
+
+set.seed(42)
+map_dfr(seq(0.05, 0.9, 0.01), function(i){
+  circassian_100 %>% 
+    group_by(dataset_id) %>% 
+    sample_n(N*i) %>% 
+    mutate(proportion_of_village = i,
+           cluster_type = "random")
+}) ->
+  random_result
+
+random_result %>% 
+  bind_rows(hclust_result, kmeans_result) %>% 
+  distinct(proportion_of_village, cluster_type, dialect) %>% 
+  count(proportion_of_village, cluster_type) %>% 
+  mutate(ratio = n/10) %>% 
+  write_csv("data/circassian_all_results.csv")
+
+circassian_all_results <- read_csv("data/circassian_all_results.csv")
+circassian_all_results %>% 
+  mutate(cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering"))) %>% 
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.02)+
+  geom_smooth(se = FALSE)

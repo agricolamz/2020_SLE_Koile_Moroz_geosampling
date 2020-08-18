@@ -47,6 +47,11 @@ all_results %>%
          cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering")),
          ratio_binary = ifelse(ratio == 1, 1, 0)) ->
   all_results
+circassian_all_results <- read_csv("data/circassian_all_results.csv")
+circassian_all_results %>% 
+    mutate(cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering")),
+         ratio_binary = ifelse(ratio == 1, 1, 0)) ->
+  circassian_all_results
 ```
 
 # Introduction
@@ -328,6 +333,36 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
 ```
   
 # Circassian data example
+
+## Algorithm evaluation using Circassian data [@moroz2017]
+
+* proportion of villages: 0.05, 0.06, $\dots$, 0.89, 0.9
+* `r nrow(circassian)` villages
+* 100 runs of each method on the same dataset
+
+```{r, fig.height=5}
+map.feature(languages = circassian$language,
+            features = circassian$dialect,
+            latitude = circassian$latitude,
+            longitude = circassian$longitude, 
+            minimap = TRUE,
+            minimap.position = "topright",
+            legend.position = "bottomleft",
+            tile = "Esri.WorldTopoMap")
+```
+
+## Algorithm evaluation using Circassian data [@moroz2017]
+
+```{r}
+circassian_all_results %>% 
+  mutate(cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering"))) %>% 
+  ggplot(aes(proportion_of_village, ratio, color = cluster_type))+
+  geom_jitter(alpha = 0.02)+
+  geom_smooth(se = FALSE)+
+    labs(y = "proportion of variation discovered",
+       x = "proportion of villages sampled",
+       color = "")
+```
 
 # Entropy
 
