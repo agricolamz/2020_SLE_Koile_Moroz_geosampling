@@ -74,7 +74,7 @@ circassian %>%
 
 * We are interested in spotting variation of a discrete parameter among the lects spoken on these villages
 
-```{r, fig.height=5}
+```{r, fig.height=6}
 map.feature(languages = circassian$language,
             features = circassian$language,
             latitude = circassian$latitude,
@@ -93,7 +93,7 @@ map.feature(languages = circassian$language,
     1) How many villages is enough for detecting all variation present? (number of categories)
     2) Given an amount of sampled villages, how to decide which ones are representative of our population?
 
-```{r, fig.height=5}
+```{r, fig.height=6}
 map.feature(languages = circassian$language,
             features = circassian$dialect,
             latitude = circassian$latitude,
@@ -332,7 +332,9 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
                   legend.position="bottom")+
   labs(y = "proportion of variation discovered",
        x = "proportion of villages sampled",
-       color = "")
+       color = "",
+       title = "Predicted values of the logistic regression")+
+  scale_color_discrete()
 ```
   
 # Circassian data example
@@ -343,7 +345,7 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
 * `r nrow(circassian)` villages
 * 100 runs of each method on the same dataset
 
-```{r, fig.height=5}
+```{r, fig.height=6}
 map.feature(languages = circassian$language,
             features = circassian$dialect,
             latitude = circassian$latitude,
