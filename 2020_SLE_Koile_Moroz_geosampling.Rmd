@@ -32,6 +32,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(broom)
 library(ggeffects)
+library(lingtypology)
 theme_set(theme_bw()+
             theme(text = element_text(size = 15),
                   legend.position="bottom"))
@@ -52,6 +53,11 @@ circassian_all_results %>%
     mutate(cluster_type = factor(cluster_type, levels = c("random", "k-means", "hierarchical clustering")),
          ratio_binary = ifelse(ratio == 1, 1, 0)) ->
   circassian_all_results
+
+circassian %>% 
+  mutate(dialect = ifelse(dialect == "Abadzex", "Temirgoy", dialect),
+         dialect = ifelse(dialect == "Xakuch", "Shapsug", dialect)) -> 
+  circassian
 ```
 
 # Introduction
@@ -62,8 +68,6 @@ circassian_all_results %>%
 * It can be found in phonological, morphosyntactic, and lexical features. 
 * It could be overlooked by linguists [@dorian10].
 
-# The problem
-
 ## The problem
 
 * Let us consider a geographical dialect continuum formed by a group of small villages [@chambers2004dialectology: 5--7]
@@ -71,7 +75,6 @@ circassian_all_results %>%
 * We are interested in spotting variation of a discrete parameter among the lects spoken on these villages
 
 ```{r, fig.height=5}
-library(lingtypology)
 map.feature(languages = circassian$language,
             features = circassian$language,
             latitude = circassian$latitude,
@@ -351,6 +354,7 @@ map.feature(languages = circassian$language,
             tile = "Esri.WorldTopoMap")
 ```
 
+
 ## Algorithm evaluation using Circassian data [@moroz2017]
 
 ```{r}
@@ -406,19 +410,16 @@ all_results %>%
        color = "", linetype = "")
 ```
 
-## Information entropy: simulated data
-
-* We can see that our sampling method performs considerably better than random for lower values of entropy, as expected.
-
 # Conclusions
 
-* We introduced a geographical sampling method for detecting variation in languages, based on different clustering methods
-* We tested our method against random sampling in data simulated with different geographical distribution and size
-* We applied our method to real data from Circassian languages
-* We have found that our method outperforms random sampling in the cases where an underlying geographical structure is present, and performs equally well as it when variation is uniformly distributed across space
-* We found that our method has optimal results when entropy is lower
-
-
 ## Conclusions
+
+* We introduced a geographical sampling algorithm for detecting variation in languages, based on different clustering methods
+* We tested our algorithm against random sampling in data simulated with different geographical distributions and numbers of observations
+* We have found that our algorithm outperforms random sampling on simulated data in the cases where an underlying geographical structure is present, and performs equally well as it when variation is uniformly distributed across space
+* We applied our algorithm to real data from Circassian languages
+* We have found that our algorithm outperforms random sampling on real data for the small sample proportions, but hirarchical clustering has bad perfomance on larger sample proportions on those data
+
+* We found that our algorithm has optimal results when entropy is lower
 
 # References {.allowframebreaks}

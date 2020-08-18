@@ -1008,6 +1008,11 @@ random_result %>%
 
 library(lingtypology)
 
+circassian %>% 
+  mutate(dialect = ifelse(dialect == "Abadzex", "Temirgoy", dialect),
+         dialect = ifelse(dialect == "Xakuch", "Shapsug", dialect)) -> 
+  new_circassian
+
 N <- nrow(circassian)
 
 map_dfr(1:100, function(i){
@@ -1059,7 +1064,7 @@ random_result %>%
   bind_rows(hclust_result, kmeans_result) %>% 
   distinct(proportion_of_village, cluster_type, dialect) %>% 
   count(proportion_of_village, cluster_type) %>% 
-  mutate(ratio = n/10) %>% 
+  mutate(ratio = n/8) %>% 
   write_csv("data/circassian_all_results.csv")
 
 circassian_all_results <- read_csv("data/circassian_all_results.csv")
