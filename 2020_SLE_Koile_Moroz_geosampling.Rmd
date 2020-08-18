@@ -55,7 +55,7 @@ all_results %>%
 
 * Geolectal variation is often present in settings where one language is spoken across a vast geographic area [@labov1963social].
 * It can be found in phonological, morphosyntactic, and lexical features. 
-* Could be overlooked by linguists [@dorian10].
+* It could be overlooked by linguists [@dorian10].
 
 # The problem
 
@@ -101,33 +101,36 @@ map.feature(languages = circassian$language,
 
 ## Our approach
 
-* We want to find the distribution of variation for one feature, and we try different ways of choosing the sampled villages for finding it
+* We want to find the amount of variation present for one feature, and we try different ways of choosing the sampled villages for finding it
 
-* As we assume we don't have any data beyond the geographic location of each village, we use these locations for building our sample
+* As we assume we do not have any data beyond the geographic location of each village, we use these locations for building our sample
 
 * We generate clusters with different algorithms (k-means, hierarchical clustering) and pick our sampled locations based on them (package stats, [@rteam]).
 
-* We compare our results against random sampling in two different scenarios, both for simulated and for real Circassian data: 
-    * Multiple categorical data (detect variation)
-    * Binary categorical data (estimate variation)
+* We compare our results against random geographic sampling for multiple categorical data, in two different scenarios:
+    * Simulated data
+    * Dialects of Circassian languages
 
 # Simulated data
 
 ## Simulated data
 
+**Data**
 * total number of locations (*N*): $30, 50, 70$
-* type of spatial relations:
-    * uniformly distributed
-    * equadistant -- ...
-    * central and periphery
-* number of categories (???): $3, 4, 5$
-* proportion of categories (???): e. g. $20-16-14, 9-8-7-5-1$
-* proportion of variation in the explored variable ($p$): $0.05, 0.10 \dots 0.90$
-* amount of clusters ($k$): $N\times0.05, N\times0.10, \dots N\times0.90$
+* number of categories (*n*): $3, 4, 5$
+* type of spatial configuration:
+    * uniform: variation is uniformly distributed across space
+    * equadistant: *n* groups with unique values, partially overlaping 
+    * central-periphery: one main group in the center, and the rest around it
+* count configuration (*c*): how the *n* categories are distributed across the *N* locations (e.g., for *N*=30, *n*=3, the count configuration could be *c*=10-10-10, *c*=20-8-2, etc.)
 
-From  those values we could derive a number of sampled locations ($n$):
+**Sampling**
+* clustering method: hierarchical clustering, k-means, random sampling
+* proportion of villages sampled: $p = 0.05, 0.10, \ldots, 0.95$
 
-$$n = N\times r$$
+From  those values we could derive the number of sampled locations, or number of clusters ($k$):
+
+$$n = p\times N$$
 
 ## Example of different number of locations (*N*)
 
@@ -178,7 +181,7 @@ generated_data %>%
 ```
 
 
-## Example of different proportion of categories
+## Example of different count configurations
 
 ```{r}
 set.seed(42)
@@ -204,7 +207,7 @@ generated_data %>%
   scale_shape_manual("", values=c(15,16,17,18))
 ```
 
-## Example of different types of spatial relations
+## Example of different types of spatial configurations
 
 ```{r}
 set.seed(42)
@@ -246,20 +249,26 @@ generated_data %>%
 
 ## Results
 
-* Plots of fitting with different parameters
+**Plots of fitting with different parameters (raw proportions, no modelling)**
 
 ## Modelling the variation
 
-* We want to account quantitatively for the improvement of our fitting according to the different parameters present
+* From the previous slides, we can see that our sampling methods outperform random sampling
 
-* We model a logistic regression (values: all variation discovered / not all variation discovered), with the following parameters modifying the independent variable 
+* We want to account quantitatively how this improvement depends on different parameters present
 
+* We run a logistic regression with outcomes
+  * All varaition discovered / Not all variation discovered 
+* and parameters:  
+  * Proportion of villages sampled $p$ (numeric: $0.05.\ldots,0.95$)
   * Type of clustering (hirarchical, K-means, random)
-  * Amount of categories (numeric: 3,4,5)
-  * Type of geographic distribution (central-periphery, separated clusters, random)
-  * Amount of total villages (numeric: 30, 50, 70)
-  * Entropy (numeric)
+  * **Amount of categories $n$ (numeric: 3,4,5)**
+  * Type of geographic distribution (central-periphery, equidistant, uniform)
+  * **Amount of total villages $N$ (numeric: 30, 50, 70)**
+  * **Entropy $H$ (numeric) **
   
+outcome ~ logistic[ (spatial_configuration+cluster_type)*proportion_villages ]
+             
 ## Results
 
 ```{r}
@@ -284,7 +293,7 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
 
 ## Information entropy
 
-In order to measure the diversity of the questions we used the easiest measure --- information entropy, introduced in [@shannon48]:
+In order to measure how the count configuration $c$ affects our sampling method, we used the information entropy, introduced in [@shannon48]:
 
 $$H(X) = - \sum_{i = 1}^n{P(x_i)\times\log_2P(x_i)}$$
 \pause
@@ -321,6 +330,9 @@ all_results %>%
   labs(x = "entropy", color = "", linetype = "")
 ```
 
+## Information entropy: simulated data
+
+* We can see that our sampling method performs considerably better than random for lower values of entropy, as expected.
 
 # Conclusions
 
