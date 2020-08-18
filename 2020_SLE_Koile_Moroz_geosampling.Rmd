@@ -41,7 +41,7 @@ df <- read_csv("data/fake_data.csv")
 * It can be found in phonological, morphosyntactic, and lexical features. 
 * Could be overlooked by linguists [@dorian10].
 
-#The problem
+# The problem
 
 ## The problem
 
@@ -67,8 +67,7 @@ map.feature(languages = circassian$language,
 
 * *Research Question*: How to choose the sample of villages to survey? 
     1) How many villages is enough for detecting all variation present? (number of categories)
-    2) How many villages is enough for estimating the variation? (proportion of each category)
-    3) Given an amount of sampled villages, how to decide which ones are representative of our population?
+    2) Given an amount of sampled villages, how to decide which ones are representative of our population?
 
 ```{r, fig.height=5}
 map.feature(languages = circassian$language,
@@ -197,6 +196,28 @@ df %>%
   theme(axis.text = element_blank(),
         axis.ticks = element_blank())
 ```
+
+# Results and modelling
+
+## Results
+
+* Plots of fitting with different parameters
+
+## Modelling the variation
+
+* We want to account quantitatively for the improvement of our fitting according to the different parameters present
+
+* We model a logistic regression (values: all variation discovered / not all variation discovered), with the following parameters modifying the independent variable 
+
+  * Type of clustering (hyerarchical, K-means, random)
+  * Amount of categories (numeric: 3,4,5)
+  * Type of geographic distribution (central-periphery, separated clusters, random)
+  * Amount of total villages (numeric: 30, 50, 70)
+  * Entropy (numeric)
+  
+
+
+
 
 # Circassian data example
 
