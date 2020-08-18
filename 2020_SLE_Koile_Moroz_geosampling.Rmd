@@ -90,8 +90,6 @@ map.feature(languages = circassian$language,
 * It is very impractical to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
 
 * *Research Question*: How to choose the sample of villages to survey? 
-    1) *How many* villages is enough for detecting all variation present? (number of categories)
-    2) How to decide *which* villages are representative of our population?
 
 ```{r, fig.height=6}
 map.feature(languages = circassian$language,
@@ -337,15 +335,16 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
        x = "proportion of villages sampled",
        color = "",
        title = "Predicted values of the logistic regression")+
-  scale_color_discrete()
+  scale_color_manual(values = hcl(h = c(15, 135, 255, 375), l = 65, c = 100)[c(3:1)])
 ```
   
 # Circassian data example
 
 ## Algorithm evaluation using Circassian data [@moroz2017]
 
-* proportion of villages: 0.05, 0.06, $\dots$, 0.89, 0.9
 * `r nrow(circassian)` villages
+* proportion of villages sampled: 0.05, 0.06, $\dots$, 0.89, 0.9
+* true count configuration: 68-27-17-15-13-10-5-3
 * 100 runs of each method on the same dataset
 
 ```{r, fig.height=6}
@@ -412,7 +411,11 @@ all_results %>%
   geom_smooth(se = FALSE)+
   scale_linetype_manual("", values=c(1,2,4))+
   labs(x = "entropy", y = "proportion of variation discovered",
-       color = "", linetype = "")
+       color = "", linetype = "")+
+  guides(linetype = FALSE)+
+  annotate(geom = "text", x = 1.7, y = 0.97, label = "3", size = 10)+
+  annotate(geom = "text", x = 2.1, y = 0.95, label = "4", size = 10)+
+  annotate(geom = "text", x = 2.4, y = 0.94, label = "5", size = 10)
 ```
 
 # Conclusions
