@@ -72,7 +72,7 @@ circassian %>%
 
 * Let us consider a geographical dialect continuum formed by a group of small villages [@chambers2004dialectology: 5--7]
 
-* We are interested in spotting variation of a discrete parameter among the lects spoken on these villages
+* We are interested in spotting variation of a discrete parameter among the lects spoken in these villages
 
 ```{r, fig.height=5}
 map.feature(languages = circassian$language,
@@ -87,11 +87,11 @@ map.feature(languages = circassian$language,
 
 ## The problem
 
-* We will very unlikely be able to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
+* It is very impractical to conduct fieldwork in each single village. Therefore, we need to choose a *sample* of locations.
 
 * *Research Question*: How to choose the sample of villages to survey? 
-    1) How many villages is enough for detecting all variation present? (number of categories)
-    2) Given an amount of sampled villages, how to decide which ones are representative of our population?
+    1) *How many* villages is enough for detecting all variation present? (number of categories)
+    2) How to decide *which* villages are representative of our population?
 
 ```{r, fig.height=5}
 map.feature(languages = circassian$language,
@@ -109,11 +109,11 @@ map.feature(languages = circassian$language,
 
 ## Our approach
 
-* We want to find the amount of variation present for one feature, and we try different ways of choosing the sampled villages for finding it
+* We want to find the amount of variation present for a given feature. Therefore, we try different ways of choosing the villages to sample for detecting this variation.
 
-* As we assume we do not have any data beyond the geographic location of each village, we use these locations for building our sample
+* As we assume we do not have any data beyond the geographic location of each village, we use these locations for building our sample.
 
-* We generate clusters with different algorithms (k-means, hierarchical clustering) and pick our sampled locations based on them (package stats, [@rteam]).
+* We generate clusters with different algorithms (*k*-means, hierarchical clustering) and pick our sampled locations based on them (package stats, [@rteam]).
 
 * We compare our results against random geographic sampling for multiple categorical data, in two different scenarios:
     * Simulated data
@@ -123,11 +123,11 @@ map.feature(languages = circassian$language,
 
 ## Simulated data
 
-### Data
+### Data generation
 
 * total number of locations (*N*): $30, 50, 70$
 * number of categories (*n*): $3, 4, 5$
-* type of spatial configuration:
+* type of spatial relation:
     * uniform: variation is uniformly distributed across space
     * equadistant: *n* groups with unique values, partially overlaping 
     * central-periphery: one main group in the center, the rest around it
@@ -254,7 +254,7 @@ generated_data %>%
 
 # Results and modelling
 
-## Results by number of villages
+## Results by total number of villages (*N*)
 
 ```{r}
 all_results %>%   
@@ -267,7 +267,7 @@ all_results %>%
        color = "")
 ```
 
-## Results by number of categories
+## Results by number of categories (*n*)
 
 ```{r}
 all_results %>%   
@@ -300,14 +300,17 @@ all_results %>%
   * *k*-means and hierarchical clustering are signifficantly better than random sampling in non-uniform spatial relations;
   * *k*-means and hierarchical clustering are as good as random sampling with uniform spatial relations.
 
+\pause
+
 * We run a logistic regression in order to prove those observations by quantifying the relation between:
-  * One **binary variable** (All variation discovered vs. Not all variation discovered)
-  * And three parameters:  
+  * One **binary variable** (outcome):
+    * All variation discovered vs. Not all variation discovered
+  * Three parameters:  
       * Proportion of villages sampled $p$ (numeric: $0.05, \ldots, 0.90$)
       * Type of clustering (hirarchical, *k*-means, random)
       * Type of geographic distribution (central-periphery, equidistant, uniform)
   
-outcome ~ (spatial configuration + cluster type) * proportion_villages
+outcome ~ (spatial configuration + cluster type) * proportion_of_villages
              
 ## Regression results
 
@@ -372,7 +375,7 @@ circassian_all_results %>%
 
 ## Information entropy
 
-In order to measure how the count configuration $c$ affects our sampling method, we used the information entropy, introduced in [@shannon48]:
+In order to measure how the count configuration $c$ affects our sampling method, we use the information entropy, introduced in [@shannon48]:
 
 $$H(X) = - \sum_{i = 1}^n{P(x_i)\times\log_2P(x_i)}$$
 \pause
@@ -414,12 +417,11 @@ all_results %>%
 
 ## Conclusions
 
-* We introduced a geographical sampling algorithm for detecting variation in languages, based on different clustering methods
-* We tested our algorithm against random sampling in data simulated with different geographical distributions and numbers of observations
-* We have found that our algorithm outperforms random sampling on simulated data in the cases where an underlying geographical structure is present, and performs equally well as it when variation is uniformly distributed across space
+* We introduced a geographic sampling algorithm for detecting variation in doculects, based on different clustering methods
+* We tested our algorithm against random sampling in data simulated with different geographic distributions and numbers of observations
+* We have found that our algorithm outperforms random sampling on simulated data in the cases where an underlying geographical structure is present, and performs as well as random sampling when variation is uniformly distributed across space
 * We applied our algorithm to real data from Circassian languages
-* We have found that our algorithm outperforms random sampling on real data for the small sample proportions, but hirarchical clustering has bad perfomance on larger sample proportions on those data
-
+* We have found that our algorithm outperforms random sampling on real data for small sample proportions, but hirarchical clustering becomes worse than random sampling on larger sample proportions on those specific data
 * We found that our algorithm has optimal results when entropy is lower
 
 # References {.allowframebreaks}
