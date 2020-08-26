@@ -3,7 +3,7 @@ title: "Detecting linguistic variation with geographic sampling - lite version"
 author: "Ezequiel Koile, George Moroz"
 institute: "Linguistic Convergence Laboratory, NRU HSE"
 date: |
-    | 26 August 2020
+    | 26 August 2020, 53rd Annual Meeting of the Societas Linguistica Europaea
     |
     |    
     | ![](images/00_qrcode.png)'
@@ -60,7 +60,6 @@ circassian %>%
   circassian
 ```
 
-# The problem
 
 ## The problem
 
@@ -82,9 +81,6 @@ map.feature(languages = circassian$language,
             tile = "Esri.WorldTopoMap")
 ```
 
-
-# Our approach
-
 ## Our approach
 
 * We want to find the amount of variation present for a given feature. 
@@ -96,11 +92,6 @@ map.feature(languages = circassian$language,
 * We compare our results against random geographic sampling for multiple categorical data, in two different scenarios:
     * Simulated data
     * Dialects of Circassian languages
-
-# Simulated data
-
-## Simulated data
-
 
 ## Example of different number of locations (*N*)
 
@@ -214,8 +205,6 @@ generated_data %>%
 ```
 
 
-# Results and modelling
-
 ## Results by type of spatial relation
 
 ```{r}
@@ -270,8 +259,6 @@ ggeffect(fit_1, terms = c("proportion_of_village", "cluster_type", "type")) %>%
   scale_color_manual(values = hcl(h = c(15, 135, 255, 375), l = 65, c = 100)[c(3:1)])
 ```
   
-# Circassian data example
-
 ## Algorithm evaluation using Circassian data [@moroz2017]
 
 * `r nrow(circassian)` villages
@@ -304,8 +291,6 @@ circassian_all_results %>%
        color = "")
 ```
 
-# Entropy
-
 ## Information entropy: simulated data
 
 ```{r}
@@ -321,8 +306,6 @@ all_results %>%
   annotate(geom = "text", x = 2.1, y = 0.95, label = "4", size = 10)+
   annotate(geom = "text", x = 2.4, y = 0.94, label = "5", size = 10)
 ```
-
-# Conclusions
 
 ## Conclusions
 
