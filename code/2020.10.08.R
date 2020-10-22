@@ -11,17 +11,24 @@ generate_equadistant <- function(N = 5,
                                  central_distance = function(r){log(r)},
                                  neighbour_distance = function(r, N){2*r*sin(pi/N)},
                                  center = FALSE){
+  n <- unlist(n)
   
   if(length(n) == 1){
     n <- rep(n, N)
   }
-
+  
+  if(length(n) != N){
+    stop("The number of groups (N) should be equal to the number of values in number of observations (n)")
+  }
+  
   if(center){
     N <- N-1
     n_center <-  n[length(n)]
     n <- n[-length(n)]
   }
-  
+
+  n <- sample(n) # in order to have random order of number of observation per groups 
+    
   angle <- 2*pi/N
   lapply(1:N, function(k){
     V1 <- (2-rlnorm(n = n[k], meanlog = 0, sdlog = central_distance(r)))*r
@@ -58,7 +65,7 @@ generate_equadistant <- function(N = 5,
 library(tidyverse)
 
 set.seed(42)
-generate_equadistant(N = 5, n = c(4, 2, 5, 3, 1)*10, r = 20, 
+generate_equadistant(N = 5, n = c(1, 2, 3, 4, 5)*10, r = 20, 
                      central_distance = function(x){log(x)/5},
                      neighbour_distance = function(r, N){0.6*r*sin(pi/N)},                    
                      center = TRUE) %>% 
