@@ -1,28 +1,12 @@
 all_categories_values <- function(n_villages = 30, n_categories = 5){
-  
-  # from https://stackoverflow.com/a/32618446/6056442
-  w <- 1:n_villages
-  t <- n_villages
-  D <- list()
-  for (j in 0:t) D[[paste(0, j)]] <- list(c())
-  for (i in 1:t) D[[paste(i, 0)]] <- list()
-  for (j in 1:t) {
-    for (i in 1:t) {
-      D[[paste(i, j)]] <- do.call(c, lapply(0:floor(i/w[j]), 
-                                            function(r) {
-                                              lapply(D[[paste(i-r*w[j], j-1)]], 
-                                                     function(x) c(x, rep(w[j], r)))
-                                            }))
-    }
-  }
-  r <- D[[paste(t, t)]]
-  
-  library(tidyverse)
-  r[which(unlist(lapply(r, length)) %in% n_categories)] %>% 
-    as.data.frame() %>%
+  require(tidyverse,quietly = TRUE)
+  partitions::parts(n_villages) %>% 
+    as.matrix() %>% 
     t() %>% 
-    unname() %>% 
-    as_tibble() %>% 
+    as.data.frame() %>% 
+    filter(eval(parse(text = str_c("V", n_categories+1))) == 0,
+           eval(parse(text = str_c("V", n_categories))) != 0) %>% 
+    select(1:all_of(n_categories)) %>% 
     mutate(set = 1:n()) %>% 
     pivot_longer(values_to = "value", names_to = "column", -set) %>% 
     group_by(set) %>% 
@@ -36,8 +20,8 @@ all_categories_values <- function(n_villages = 30, n_categories = 5){
 }
 
 
-n_villages <- 50
-n_categories <- 3
+n_villages <- 30
+n_categories <- 5
 
 df <- all_categories_values(n_villages, n_categories)
 
@@ -48,10 +32,17 @@ map_dfr(seq_along(df$set), function(j){
 }) ->
     equadistant_dataset
 
+equadistant_dataset %>% 
+  filter(set %in% sample(1:nrow(df), 6)) %>% 
+  ggplot(aes(x, y, color = id))+
+  geom_point()+
+  facet_wrap(~set)+
+  stat_ellipse()+
+  theme_bw()
 
 # number of villages 30-40-50-60-70-80
 # number of categories 3-4-5-6-7-8-9-10
 
 # 4Garik
-# rewrite wih Ezi's code
+# rewrite with Ezi's code - done!
 # generate all data and run all clustering in order to produce entropy vs proportion of variation discovered
