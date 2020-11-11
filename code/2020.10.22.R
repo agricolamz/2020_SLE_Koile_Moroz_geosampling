@@ -20,8 +20,8 @@ all_categories_values <- function(n_villages = 30, n_categories = 5){
 }
 
 
-n_villages <- 30
-n_categories <- 5
+n_villages <- 80
+n_categories <- 10
 
 df <- all_categories_values(n_villages, n_categories)
 
