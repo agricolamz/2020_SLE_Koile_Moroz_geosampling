@@ -109,14 +109,24 @@ set.seed(42)
 
 system.time(
 map(1:nrow(df), function(i){
-  generate_equadistant(N = unique(df$n_categories[i]), 
+  generate_equadistant(center = FALSE,
+                       N = unique(df$n_categories[i]), 
                        n  = df[i, -c(1:4)] %>% 
                          t() %>% 
                          as_tibble() %>% 
                          na.omit() %>% 
                          pull()) %>% 
-    bind_cols(df[i,]) %>% colnames() %>% paste0(collapse = "', '")
-    write_csv("generated_data/overall_dataset.csv", append = TRUE)   
+    bind_cols(df[i,]) %>% 
+    write_csv("generated_data/equadistant.csv", append = TRUE)
+  generate_equadistant(center = TRUE,
+                       N = unique(df$n_categories[i]), 
+                       n  = df[i, -c(1:4)] %>% 
+                           t() %>% 
+                           as_tibble() %>% 
+                           na.omit() %>% 
+                           pull()) %>% 
+    bind_cols(df[i,]) %>% 
+    write_csv("generated_data/cennter_periphery.csv", append = TRUE)   
 })
 )
 
