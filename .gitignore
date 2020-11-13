@@ -19,3 +19,4 @@
 *.blg
 *.bbl
 generated_data/*
+*.Route
