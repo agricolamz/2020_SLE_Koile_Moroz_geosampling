@@ -1,6 +1,10 @@
-setwd("/home/agricolamz/work/materials/2020_SLE_Koile_Moroz_geosampling")
+setwd("/home/agricolamz/work/materials/2020_SLE_Koile_Moroz_geosampling/generated_data/")
 library(tidyverse)
-df <- data.table::fread("generated_data/equadistant.csv")
+files <- c("equadistant.csv", "center_periphery.csv")
+system.time(
+map(files, function(file){
+
+df <- data.table::fread(file)
 
 colnames(df) <-
   c(
@@ -22,6 +26,7 @@ colnames(df) <-
     'V9'
   )
 
+set.seed(42)
 map_dfr(seq(0.05, 0.9, 0.05), function(i){
 df %>% 
   mutate(n_centers = round(n_villages*i)) %>% 
@@ -30,13 +35,13 @@ df %>%
   group_by(set, cluster) %>% 
   sample_n(1) %>% 
   group_by(set, H, n_villages, n_categories) %>% 
-  summarise(variability = length(unique(id))/n_categories) %>% 
+  summarise(variability = length(unique(id))/n_categories, .groups = "drop") %>% 
   mutate(type = "k-means",
          select_p = i) %>% 
   distinct()}) ->
   k_means_results
-set.seed(42)
 
+set.seed(42)
 map_dfr(seq(0.05, 0.9, 0.05), function(i){
 df %>% 
   mutate(n_centers = round(n_villages*i)) %>% 
@@ -45,7 +50,7 @@ df %>%
   group_by(set, cluster) %>% 
   sample_n(1) %>% 
   group_by(set, H, n_villages, n_categories) %>% 
-  summarise(variability = length(unique(id))/n_categories) %>% 
+  summarise(variability = length(unique(id))/n_categories, .groups = "drop") %>% 
   mutate(type = "hclust",
          select_p = i) %>% 
   distinct()}) ->
@@ -58,7 +63,7 @@ df %>%
   group_by(set, n_centers) %>% 
   sample_n(n_centers) %>% 
   group_by(set, H, n_villages, n_categories) %>% 
-  summarise(variability = length(unique(id))/n_categories) %>% 
+  summarise(variability = length(unique(id))/n_categories, .groups = "drop") %>% 
   mutate(type = "random",
          select_p = i) %>% 
   distinct() }) ->
@@ -66,7 +71,8 @@ df %>%
 
 k_means_results %>% 
   bind_rows(hclust_results, random_results) %>% 
-  write_csv("generated_data/all_samples_results.csv")
+  mutate(dataset = file) %>% 
+  write_csv(paste0(file, "_results.csv"), append = TRUE)
   
 # read_csv("all_results.csv")  
 #   mutate(n_categories = factor(n_categories)) %>% 
@@ -74,3 +80,6 @@ k_means_results %>%
 #   ggpredict(terms = c("H", "type", "n_categories")) %>% 
 #   plot()+
 #   labs(y = "detected variability")
+
+rm(list=ls())
+}))
