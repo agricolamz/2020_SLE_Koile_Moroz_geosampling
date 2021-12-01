@@ -86,7 +86,7 @@ all_categories_values <- function(n_villages = 30, n_categories = 5){
     ungroup()
 }
 
-setwd("/home/agricolamz/work/materials/2020_SLE_Koile_Moroz_geosampling")
+setwd("/home/agricolamz/work/materials/2021_SLE_Koile_Moroz_geosampling")
 
 library(tidyverse)
 
@@ -117,7 +117,7 @@ map(1:nrow(df), function(i){
                          na.omit() %>% 
                          pull()) %>% 
     bind_cols(df[i,]) %>% 
-    write_csv("generated_data/equadistant.csv", append = TRUE)
+    write_csv("generated_data/equidistant.csv", append = TRUE)
   generate_equadistant(center = TRUE,
                        N = unique(df$n_categories[i]), 
                        n  = df[i, -c(1:4)] %>% 
