@@ -19,5 +19,6 @@
 *.blg
 *.bbl
 generated_data/*
+generated_data_2/*
 bibligraphy/*
 *.Route
